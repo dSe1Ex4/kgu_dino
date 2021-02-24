@@ -2,44 +2,51 @@ import pygame
 import random
 import time
 
+from storage import FileSave
+
 dir_imgs = 'asserts/imgs/'
 dir_audio = 'asserts/audio/'
 dir_fonts = 'asserts/fonts/'
 
 pygame.init()
 
+save_score = FileSave.get()
 display_width = 800
 display_height = 600
 
 display = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('ORA ORA ORA')
 
-pygame.mixer.music.load(dir_audio+'Heroes.mp3')
+pygame.mixer.music.load(dir_audio + 'Heroes.mp3')
 pygame.mixer.music.set_volume(0.3)
 
-hp_up_sound = pygame.mixer.Sound(dir_audio+'hp.wav')
-dmg_sound = pygame.mixer.Sound(dir_audio+'dmg.wav')
-smert_sound = pygame.mixer.Sound(dir_audio+'smert.wav')
-jump_sound = pygame.mixer.Sound(dir_audio+'jump.wav')
-fall_sound = pygame.mixer.Sound(dir_audio+'fall.wav')
-exit_sound = pygame.mixer.Sound(dir_audio+'exit.wav')
-collision_sound = pygame.mixer.Sound(dir_audio+'collision.wav')
-pause_sound = pygame.mixer.Sound(dir_audio+'Za_Warudo.wav')
-unpause_sound = pygame.mixer.Sound(dir_audio+'unpause.wav')
+hp_up_sound = pygame.mixer.Sound(dir_audio + 'hp.wav')
+dmg_sound = pygame.mixer.Sound(dir_audio + 'dmg.wav')
+smert_sound = pygame.mixer.Sound(dir_audio + 'smert.wav')
+jump_sound = pygame.mixer.Sound(dir_audio + 'jump.wav')
+fall_sound = pygame.mixer.Sound(dir_audio + 'fall.wav')
+exit_sound = pygame.mixer.Sound(dir_audio + 'exit.wav')
+collision_sound = pygame.mixer.Sound(dir_audio + 'collision.wav')
+pause_sound = pygame.mixer.Sound(dir_audio + 'Za_Warudo.wav')
+unpause_sound = pygame.mixer.Sound(dir_audio + 'unpause.wav')
 
-icon = pygame.image.load(dir_imgs+'iconOOP.png')
+icon = pygame.image.load(dir_imgs + 'iconOOP.png')
 pygame.display.set_icon(icon)
 
-cactus_img = [pygame.image.load(dir_imgs+'cactus1.png'), pygame.image.load(dir_imgs+'cactus2.png'), pygame.image.load(dir_imgs+'cactus3.png')]
+cactus_img = [pygame.image.load(dir_imgs + 'cactus1.png'), pygame.image.load(dir_imgs + 'cactus2.png'),
+              pygame.image.load(dir_imgs + 'cactus3.png')]
 cactus_options = [20, 430, 30, 450, 25, 420]
 
-stone_img = [pygame.image.load(dir_imgs+'stone1.png'), pygame.image.load(dir_imgs+'stone2.png'), pygame.image.load(dir_imgs+'stone3.png'),
-             pygame.image.load(dir_imgs+'stone4.png'), pygame.image.load(dir_imgs+'stone5.png'), pygame.image.load(dir_imgs+'stone6.png')]
-cloud_img = [pygame.image.load(dir_imgs+'cloud1.png'), pygame.image.load(dir_imgs+'cloud2.png')]
+stone_img = [pygame.image.load(dir_imgs + 'stone1.png'), pygame.image.load(dir_imgs + 'stone2.png'),
+             pygame.image.load(dir_imgs + 'stone3.png'),
+             pygame.image.load(dir_imgs + 'stone4.png'), pygame.image.load(dir_imgs + 'stone5.png'),
+             pygame.image.load(dir_imgs + 'stone6.png')]
+cloud_img = [pygame.image.load(dir_imgs + 'cloud1.png'), pygame.image.load(dir_imgs + 'cloud2.png')]
 
-pers_img = [pygame.image.load(dir_imgs+'pers1.png'), pygame.image.load(dir_imgs+'pers2.png'), pygame.image.load(dir_imgs+'pers3.png')]
+pers_img = [pygame.image.load(dir_imgs + 'pers1.png'), pygame.image.load(dir_imgs + 'pers2.png'),
+            pygame.image.load(dir_imgs + 'pers3.png')]
 
-hp_img = pygame.image.load(dir_imgs+'milk.png')
+hp_img = pygame.image.load(dir_imgs + 'milk.png')
 hp_img = pygame.transform.scale(hp_img, (30, 30))
 
 img_counter = 0
@@ -98,7 +105,7 @@ def run_game():
     game = True
     cactus_arr = []
     create_cactus_arr(cactus_arr)
-    land = pygame.image.load(dir_imgs+'fon.png')
+    land = pygame.image.load(dir_imgs + 'fon.png')
 
     stone, cloud = open_random_objects()
     heart = Object(display_width, 280, 30, hp_img, 4)
@@ -124,7 +131,7 @@ def run_game():
 
         display.blit(land, (0, 0))
         print_text('Pause: Esc', 10, 10)
-        print_text('Scores: ' + str(scores), 600, 10)
+        print_text('Scores: ' + str(scores) + '/' + str(save_score), 600, 10)
 
         draw_array(cactus_arr)
         move_object(stone, cloud)
@@ -262,7 +269,7 @@ def draw_pers():
     img_counter += 1
 
 
-def print_text(message, x, y, font_color=(0, 0, 0), font_type=dir_fonts+'poi.ttf', font_size=30):
+def print_text(message, x, y, font_color=(0, 0, 0), font_type=dir_fonts + 'poi.ttf', font_size=30):
     font_type = pygame.font.Font(font_type, font_size)
     text = font_type.render(message, True, font_color)
     display.blit(text, (x, y))
@@ -326,6 +333,7 @@ def count_scores(barriers):
 
 
 def game_over():
+    FileSave.save(max(scores, save_score))
     stopped = True
     while stopped:
         for event in pygame.event.get():
